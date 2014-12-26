@@ -66,7 +66,7 @@ namespace MapResourceOverlay
             Model.Bright = GUILayout.Toggle(Model.Bright, "bright");
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("low Cuttoff ppm: ");
+            GUILayout.Label("low Cuttoff %: ");
             int temp;
             var cutoff = GUILayout.TextField(Model.Cutoff.ToString());
             if (Int32.TryParse(cutoff, out temp))

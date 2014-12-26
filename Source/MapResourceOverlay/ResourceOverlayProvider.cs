@@ -15,10 +15,8 @@ namespace MapResourceOverlay
         private ResourceConfig _activeResource;
         private double _displayMax;
 
-        private delegate Object GetResourceAvailabilityByRealResourceNameDelegate(
-            int bodyIndex, string resourceName, double lon, double lat);
-        
-        private Func<object,object> _getAmount;
+        private delegate float GetResourceAvailabilityByRealResourceNameDelegate(
+            double lat, double lon, string resourceName, int bodyIndex, int type, double altitude);
 
         private GetResourceAvailabilityByRealResourceNameDelegate _getResourceAvailabilityByRealResourceName;
         private bool _logaritmic;
@@ -51,8 +49,9 @@ namespace MapResourceOverlay
             {
                 for (int lon = 0; lon < 360; lon++)
                 {
-                    var amount = (double)_getAmount(_getResourceAvailabilityByRealResourceName(_body.flightGlobalsIndex,
-                        ActiveResource.Resource.ResourceName, lon, lat));
+                    var amount = (double)(_getResourceAvailabilityByRealResourceName(lat, lon, 
+						ActiveResource.Resource.ResourceName, _body.flightGlobalsIndex, 0, 0));
+                    amount *= 100;
                     if (amount > _displayMax)
                     {
                         _displayMax = amount;
@@ -60,7 +59,7 @@ namespace MapResourceOverlay
                     avg += amount;
                 }
             }
-            _displayMax *= 1000000;
+            _displayMax *= 2;
             avg = avg/(180*360);
         }
 
@@ -71,9 +70,9 @@ namespace MapResourceOverlay
             {
                 return new Color32(0, 0, 0, 0);
             }
-            var avail = _getResourceAvailabilityByRealResourceName(body.flightGlobalsIndex,
-                ActiveResource.Resource.ResourceName, latitude, longitude);
-            var amount = (double)_getAmount(avail) * 1000000;
+			var amount = (double)_getResourceAvailabilityByRealResourceName(latitude, longitude, 
+                ActiveResource.Resource.ResourceName, body.flightGlobalsIndex, 0, 0);
+            amount *= 100;
             if (amount > ActiveResource.Cutoff)
             {
                 if (Exponential)
@@ -146,10 +145,11 @@ namespace MapResourceOverlay
 
         public override OverlayTooltip TooltipContent(double latitude, double longitude, CelestialBody body)
         {
-            var abundance = (double)_getAmount(_getResourceAvailabilityByRealResourceName(body.flightGlobalsIndex,
-                ActiveResource.Resource.ResourceName, latitude, longitude));
+            var abundance = (double)_getResourceAvailabilityByRealResourceName(latitude, longitude, 
+                ActiveResource.Resource.ResourceName, body.flightGlobalsIndex, 0, 0);
+			abundance *= 100;
             return new OverlayTooltip(ActiveResource.Resource.ResourceName,
-                new GUIContent("Amount: " + (abundance*1000000.0).ToString("0.0") + "ppm"));
+                new GUIContent("Amount: " + (abundance).ToString("0.0") + "%"));
         }
 
         public override bool IsCoveredAt(double latitude, double longitude, CelestialBody body)
@@ -208,7 +208,7 @@ namespace MapResourceOverlay
             }
             catch (Exception e)
             {
-                this.Log("Couldnt find ORS" + e);
+                this.Log("Couldnt find Regolith" + e);
             }
             try
             {
@@ -244,45 +244,25 @@ namespace MapResourceOverlay
 
         public override bool CanActivate()
         {
-            this.Log("?"+ (_getAmount != null));
-            return _getAmount != null && _getResourceAvailabilityByRealResourceName != null;
+            this.Log("?"+ (_getResourceAvailabilityByRealResourceName != null));
+            return _getResourceAvailabilityByRealResourceName != null;
         }
 
         private void InitiateOrs()
         {
             var orsPlanetaryResoureMapDataType = AssemblyLoader.loadedAssemblies.SelectMany(
                 x => x.assembly.GetExportedTypes())
-				.FirstOrDefault(x => x.FullName == "ORSX.ORSX_PlanetaryResourceMapData");
+				.FirstOrDefault(x => x.FullName == "Regolith.Common.RegolithResourceMap");
             if (orsPlanetaryResoureMapDataType != null)
             {
-                var method = orsPlanetaryResoureMapDataType.GetMethod("getResourceAvailabilityByRealResourceName",
-                    new[] {typeof (int), typeof (string), typeof (double), typeof (double)});
-                if (method != null)
-                {
-                    var getAmountMethod = method.ReturnType.GetMethod("getAmount");
-                    
-                    _getResourceAvailabilityByRealResourceName =
-                        (GetResourceAvailabilityByRealResourceNameDelegate)
-                            Delegate.CreateDelegate(typeof (GetResourceAvailabilityByRealResourceNameDelegate), method);
+                MethodInfo method = orsPlanetaryResoureMapDataType.GetMethod("GetAbundance",
+                    new Type[] { typeof(double), typeof(double), typeof(string), 
+                                 typeof(int), typeof(int), typeof(double) });
 
-                    _getAmount = GenerateFunc(getAmountMethod);
-                }
+				_getResourceAvailabilityByRealResourceName =
+                    (GetResourceAvailabilityByRealResourceNameDelegate)
+                        Delegate.CreateDelegate(typeof (GetResourceAvailabilityByRealResourceNameDelegate), method);
             }
-        }
-
-        static Func<object, object> GenerateFunc(MethodInfo method)
-        {
-            var instance = Expression.Parameter(typeof(object), "instance");
-
-            var methodCall = Expression.Call(
-                Expression.Convert(instance, method.ReflectedType),
-                method
-                );
-
-            return Expression.Lambda<Func<object, object>>(
-                Expression.Convert(methodCall, typeof(object)),
-                instance
-                ).Compile();
         }
 
         public override void DrawGui(MapOverlayGui gui)
@@ -360,7 +340,7 @@ namespace MapResourceOverlay
                     _model.ActiveResource = res;
                 }
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("low Cuttoff ppm: ");
+                GUILayout.Label("low Cuttoff %: ");
                 int temp;
                 var cutoff = GUILayout.TextField(res.Cutoff.ToString());
                 GUILayout.EndHorizontal();

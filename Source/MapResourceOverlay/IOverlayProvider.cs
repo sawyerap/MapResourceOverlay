@@ -105,7 +105,7 @@ namespace MapResourceOverlay
     {
         private double _max = 800;
         private double _accuracy = 0.5;
-        private double[,] _arr;
+        //private double[,] _arr;
 
         public override Color32 CalculateColor32(double latitude, double longitude, CelestialBody body, bool useScansat, bool bright)
         {

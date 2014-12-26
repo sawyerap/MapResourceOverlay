@@ -42,8 +42,6 @@ namespace MapResourceOverlay
             return 0;
         }
 
-
-
         private void InitializeScansatIntegration()
         {
             var scanutil = AssemblyLoader.loadedAssemblies.SelectMany(x => x.assembly.GetExportedTypes())
@@ -67,26 +65,7 @@ namespace MapResourceOverlay
         {
             return _scansatIsCoveredDelegate != null;
         }
-
-        internal static int getBiomeIndex(CelestialBody body, double lon, double lat)
-        {
-            if (body.BiomeMap == null) return -1;
-            if (body.BiomeMap.Map == null) return -1;
-            //double u = fixLon(lon);
-            //double v = fixLat(lat);
-
-            //if (badDLonLat(u, v))
-            //    return -1;
-            CBAttributeMap.MapAttribute att = body.BiomeMap.GetAtt(Mathf.Deg2Rad * lat, Mathf.Deg2Rad * lon);
-            for (int i = 0; i < body.BiomeMap.Attributes.Length; ++i)
-            {
-                if (body.BiomeMap.Attributes[i] == att)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
+        
         public bool IsCovered(double longitude, double latitude, CelestialBody body, Resource resource)
         {
             if (_scansatIsCoveredDelegate == null)
@@ -96,15 +75,13 @@ namespace MapResourceOverlay
             return _scansatIsCoveredDelegate(longitude, latitude, body, GetScansatId(resource.ScansatName));
         }
 
-        public CBAttributeMap.MapAttribute GetBiome(double longitude, double latitude, CelestialBody body)
-        {
-            if (body.BiomeMap == null) return null;
-            if (body.BiomeMap.Map == null) return body.BiomeMap.defaultAttribute;
-            int i = getBiomeIndex(body, longitude, latitude);
-            if (i < 0) return body.BiomeMap.defaultAttribute;
-            else return body.BiomeMap.Attributes[i];
-        }
-
+		public CBAttributeMapSO.MapAttribute GetBiome(double lon, double lat, CelestialBody body)
+		{
+			if (body.BiomeMap == null) return null;
+            CBAttributeMapSO.MapAttribute this_biome = body.BiomeMap.GetAtt(Mathf.Deg2Rad * lat , Mathf.Deg2Rad * lon);
+            return this_biome;
+		}
+               
         public Color32 GetElevationColor32(CelestialBody body, double lon, double lat)
         {
             return heightToColor((float)GetElevation(body, lon, lat), 0, 7500);

@@ -25,7 +25,7 @@ namespace MapResourceOverlay
         private Vector2 _mouse;
         private int _toolTipId;
         private int _currentLat;
-        [KSPField(isPersistant = true)] public int cutoff = 20;
+        [KSPField(isPersistant = true)] public int cutoff = 0;
         [KSPField(isPersistant = true)] public bool bright;
         [KSPField(isPersistant = true)] public bool useScansat;
         [KSPField(isPersistant = true)] public bool show = true;

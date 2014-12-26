@@ -24,7 +24,8 @@ namespace MapResourceOverlay
             {
                 return new Color32(0,0,0,0);
             }
-            var biome = ScanSatWrapper.Instance.GetBiome(longitude, latitude, body);
+			var scanSat = ScanSatWrapper.Instance;
+			var biome = scanSat.GetBiome(longitude, latitude, body);
             float value;
             if (!_biomeTagsToTotal.TryGetValue(biome.name,out value))
             {
@@ -35,7 +36,8 @@ namespace MapResourceOverlay
 
         public override OverlayTooltip TooltipContent(double latitude, double longitude, CelestialBody body)
         {
-            var biome = ScanSatWrapper.Instance.GetBiome(longitude, latitude, body);
+			var scanSat = ScanSatWrapper.Instance;
+			var biome = scanSat.GetBiome(longitude, latitude, body);
             var all = Enum.GetValues(typeof(ExperimentSituations)).Cast<ExperimentSituations>()
                 .Select(situation => ResearchAndDevelopment.GetExperimentIDs().Select(ResearchAndDevelopment.GetExperiment)
                     .Where(x => x.biomeMask != 0 && x.situationMask != 0)
