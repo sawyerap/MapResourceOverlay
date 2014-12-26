@@ -1,8 +1,0 @@
-{
-	"NAME":"Map Resource Overlay",
-	"URL":"https://raw.githubusercontent.com/Cyrik/MapResourceOverlay/master/GameData/MapResourceOverlay/MapResourceOverlay.version",
-	"DOWNLOAD":"https://github.com/Cyrik/MapResourceOverlay/releases",
-	"CHANGE_LOG_URL":"",
-	"VERSION":{"MAJOR":0,"MINOR":2,"PATCH":7,"BUILD":0},
-	"KSP_VERSION":{"MAJOR":0,"MINOR":24,"PATCH":2}
-}
