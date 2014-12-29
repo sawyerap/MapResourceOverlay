@@ -526,9 +526,9 @@ namespace MapResourceOverlay
                 if (System.IO.File.Exists(filename))
                 {
                     var baseNode = ConfigNode.Load(filename);
-                    if (baseNode.HasNode("globalNode"))
+                    if (baseNode.HasNode("MAP_OVERLAY"))
                     {
-                        var globalNode = baseNode.GetNode("globalNode");
+                        var globalNode = baseNode.GetNode("MAP_OVERLAY");
                         foreach (var overlayProvider in OverlayProviders)
                         {
                             try
@@ -556,7 +556,7 @@ namespace MapResourceOverlay
             base.OnSave(node);
             var baseNode = new ConfigNode();
             
-            var globalNode = baseNode.AddNode("globalNode");
+            var globalNode = baseNode.AddNode("MAP_OVERLAY");
             foreach (var overlayProvider in OverlayProviders)
             {
                 overlayProvider.Save(globalNode);

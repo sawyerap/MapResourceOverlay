@@ -180,7 +180,7 @@ namespace MapResourceOverlay
             };
             var config3 = new ResourceConfig
             {
-                Resource = new Resource("Water", "Aquifer"),
+                Resource = new Resource("Water"),
                 LowColor = new Color32(0, 0, 0, 0),
                 HighColor = new Color32(0, 0, 255, 200)
             };
@@ -196,7 +196,19 @@ namespace MapResourceOverlay
                 LowColor = new Color32(0, 0, 0, 0),
                 HighColor = new Color32(255, 0, 255, 200)
             };
-            ColorConfigs = new List<ResourceConfig> { config, config2, config3, config4, config5 };
+            var config6 = new ResourceConfig
+            {
+                Resource = new Resource("Uraninite"),
+                LowColor = new Color32(0, 0, 0, 0),
+                HighColor = new Color32(255, 255, 0, 200)
+            };
+            var config7 = new ResourceConfig
+            {
+                Resource = new Resource("Oxygen"),
+                LowColor = new Color32(0, 0, 0, 0),
+                HighColor = new Color32(0, 0, 255, 200)
+            };
+            ColorConfigs = new List<ResourceConfig> { config, config2, config3, config4, config5, config6, config7 };
             ActiveResource = config;
         }
 
