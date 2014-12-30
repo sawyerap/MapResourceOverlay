@@ -13,7 +13,8 @@ namespace MapResourceOverlay
         private CelestialBody _body;
         private Mesh _mesh;
 
-        private IButton _mapOverlayButton;
+        private IButton _mapOverlayButton = null;
+        private ApplicationLauncherButton _appbutton = null;
         private MapOverlayGui _gui;
         private bool _changed;
         private Coordinates _mouseCoords;
@@ -119,12 +120,15 @@ namespace MapResourceOverlay
             }
             else
             {
+                //Stock toolbar
                 _texture = new Texture2D(38, 38);
                 _texture.LoadImage(
                     System.IO.File.ReadAllBytes(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Assets/MapOverlayIcon.enabled.png"));
-                ApplicationLauncher.Instance.AddModApplication(ToggleGui, ToggleGui,
+                _appbutton = ApplicationLauncher.Instance.AddModApplication(ToggleGui, ToggleGui,
                     null, null, null, null, ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.MAPVIEW,
                     _texture);
+                // Prevent duplicates with this callback.
+                GameEvents.onGameSceneLoadRequested.Add(ActivateOnSceneChange);
             }
             _toolTipId = new System.Random().Next(65536) + Assembly.GetExecutingAssembly().GetName().Name.GetHashCode() +
                          "tooltip".GetHashCode();
@@ -152,10 +156,17 @@ namespace MapResourceOverlay
 
         public void OnDestroy()
         {
-
+            // Clean up game objects and buttons
             this.Log("destroying MapResourceOverlay");
             gameObject.transform.parent = _origTransform;
-            _mapOverlayButton.Destroy();
+            if (_mapOverlayButton != null)
+            {
+                _mapOverlayButton.Destroy();
+            }
+            if (_appbutton != null)
+            {
+                ApplicationLauncher.Instance.RemoveModApplication(_appbutton);
+            }
             if (_gui != null)
             {
                 _gui.Model = null;
@@ -165,7 +176,8 @@ namespace MapResourceOverlay
 
             GameEvents.onHideUI.Remove(MakeInvisible);
             GameEvents.onShowUI.Remove(MakeVisible);
-
+            GameEvents.onGameSceneLoadRequested.Remove(ActivateOnSceneChange);
+            
             OverlayProvider.RedrawRequired -= OverlayProviderOnRedrawRequired;
         }
 
@@ -569,6 +581,11 @@ namespace MapResourceOverlay
         public void Reload()
         {
             _changed = true;
+        }
+        
+        public void ActivateOnSceneChange(GameScenes _scene)
+        {
+            ApplicationLauncher.Instance.RemoveModApplication(_appbutton);
         }
     }
 }

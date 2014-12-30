@@ -18,3 +18,14 @@ Part of the Tooltip calculation code by the MechJeb team. Original found at: htt
 Shader.txt derived from Majir's Kethane. Original found at: https://github.com/Majiir/Kethane
 Part of the ScansatWrapper.cs by the SCANSat team. Original found at: https://github.com/S-C-A-N/SCANsat
 
+---
+CHANGELOG:
+0.2.8
+    Update Biome code to 0.90
+    Update to call Regolith libraries
+    Resource ppm terminology changed to percent
+    Removed MiniAVC for now
+0.2.9
+    Added additional CRP crustal resources (oxygen and uraninite)
+    Fixed issue with duplicate buttons on stock toolbar
+    Minor renaming on setting config files.
