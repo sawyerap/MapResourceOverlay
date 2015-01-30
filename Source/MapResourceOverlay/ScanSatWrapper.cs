@@ -6,7 +6,8 @@ using UnityEngine;
 
 /*
  * Most of this is a modified version taken from SCANSat. License should be distributed with this code.
- * Any changes were made by Lukas Domagala and are under the project License.
+ * Initial changes were made by Lukas Domagala and are under the project License.
+ * Updates for SCANSAT 10 were made by atomicfury and are under the project License.
  */
 namespace MapResourceOverlay
 {
@@ -24,7 +25,9 @@ namespace MapResourceOverlay
                 return _instance;
             } 
         }
-
+        
+        // BEGIN SCANSAT CALLS - use SCANutil API
+        
         private ScanSatWrapper()
         {
             InitializeScansatIntegration();
@@ -32,32 +35,52 @@ namespace MapResourceOverlay
 
         private delegate bool IsCoveredDelegate(double lon, double lat, CelestialBody body, int mask);
         private IsCoveredDelegate _scansatIsCoveredDelegate;
-        private Type _scansatEnum;
+        
+        private delegate int GetScanTypeDelegate(string resourceName);
+        private GetScanTypeDelegate _getScanTypeDelegate;
+
         private int GetScansatId(string resourceName)
         {
-            if (_scansatEnum != null)
+            if (_getScanTypeDelegate != null)
             {
-                return (int)_scansatEnum.GetField(resourceName).GetValue(null);
+                return _getScanTypeDelegate(resourceName);
             }
             return 0;
         }
 
         private void InitializeScansatIntegration()
         {
-            var scanutil = AssemblyLoader.loadedAssemblies.SelectMany(x => x.assembly.GetExportedTypes())
-                        .FirstOrDefault(x => x.FullName == "SCANsat.SCANUtil");
-            var scandata =
-                AssemblyLoader.loadedAssemblies.SelectMany(x => x.assembly.GetExportedTypes())
-                    .FirstOrDefault(x => x.FullName == "SCANsat.SCANdata");
-            if (scanutil != null && scandata != null)
+            var scanutil = AssemblyLoader.loadedAssemblies.SelectMany(x => x.assembly.GetExportedTypes()).FirstOrDefault(x => x.FullName == "SCANsat.SCANUtil");
+            
+            //this.Log("scanutil?"+ (scanutil != null));
+            
+            if (scanutil != null)
             {
+                //this.Log("attempting iscovered method,");
+                
                 var method = scanutil.GetMethod("isCovered",
                     new[] { typeof(double), typeof(double), typeof(CelestialBody), typeof(int) });
+                                   
+                //this.Log("iscovered method?"+ (method != null));
+                
                 if (method != null)
                 {
                     _scansatIsCoveredDelegate = (IsCoveredDelegate)Delegate.CreateDelegate(typeof(IsCoveredDelegate), method);
+                    this.Log("active covered method?"+ (_scansatIsCoveredDelegate != null));
                 }
-                _scansatEnum = scandata.GetNestedType("SCANtype");
+                
+                //GetSCANtype
+                var next_method = scanutil.GetMethod("GetSCANtype",
+                    new[] { typeof(string) });
+                
+                //this.Log("getSCANtype method?"+ (next_method != null));
+                
+                if (next_method != null)
+                {
+                    _getScanTypeDelegate = (GetScanTypeDelegate)Delegate.CreateDelegate(typeof(GetScanTypeDelegate), next_method);
+                    //this.Log("active gettype method?"+ (_getScanTypeDelegate != null));
+                }
+                
             }
         }
 
@@ -74,6 +97,8 @@ namespace MapResourceOverlay
             }
             return _scansatIsCoveredDelegate(longitude, latitude, body, GetScansatId(resource.ScansatName));
         }
+        
+        // END SCANSAT CALLS
 
 		public CBAttributeMapSO.MapAttribute GetBiome(double lon, double lat, CelestialBody body)
 		{

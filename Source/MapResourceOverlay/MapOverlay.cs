@@ -28,6 +28,7 @@ namespace MapResourceOverlay
         private int _currentLat;
         [KSPField(isPersistant = true)] public int cutoff = 0;
         [KSPField(isPersistant = true)] public bool bright;
+        [KSPField(isPersistant = true)] public bool flighttooltip = false;
         [KSPField(isPersistant = true)] public bool useScansat;
         [KSPField(isPersistant = true)] public bool show = true;
         [KSPField(isPersistant = true)] public bool showTooltip = true;
@@ -67,6 +68,19 @@ namespace MapResourceOverlay
             }
         }
 
+        public bool FlightTooltip
+        {
+            get { return flighttooltip; }
+            set
+            {
+                if (flighttooltip != value)
+                {
+                    flighttooltip = value;
+                    _changed = true;
+                }
+            }
+        }
+        
         public bool UseScansat
         {
             get { return useScansat; }
@@ -240,7 +254,7 @@ namespace MapResourceOverlay
 
         private void UpdateMapView()
         {
-            if (!show || MapView.MapCamera == null)
+            if (!show || MapView.MapCamera == null || !MapView.MapIsEnabled)
             {
                 gameObject.renderer.enabled = false;
             }
@@ -325,7 +339,7 @@ namespace MapResourceOverlay
             {
                 return;
             }
-            if (show && _targetBody != null)
+            if (show && _targetBody != null && (MapView.MapIsEnabled || flighttooltip))
             {
                 if (Event.current.type == EventType.Layout)
                 {
