@@ -65,6 +65,7 @@ namespace MapResourceOverlay
 
             Model.Bright = GUILayout.Toggle(Model.Bright, "bright");
             Model.FlightTooltip = GUILayout.Toggle(Model.FlightTooltip, "In-flight tooltip");
+            Model.FlightOverlay = GUILayout.Toggle(Model.FlightOverlay, "In-flight overlay");
             
             GUILayout.BeginHorizontal();
             GUILayout.Label("low Cuttoff %: ");
