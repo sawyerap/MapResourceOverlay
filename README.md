@@ -25,6 +25,7 @@ CHANGELOG:
     Update to call Regolith libraries
     Resource ppm terminology changed to percent
     Removed MiniAVC for now
+    
 0.2.9
     Added additional CRP crustal resources (uraninite)
     Fixed issue with duplicate buttons on stock toolbar
