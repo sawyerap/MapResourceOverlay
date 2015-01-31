@@ -26,6 +26,7 @@ namespace MapResourceOverlay
         private bool _logaritmic;
         private bool _coloredScale;
         private bool _exponential;
+        private bool _biomelock = false;
 
         public ResourceConfig ActiveResource
         {
@@ -54,7 +55,7 @@ namespace MapResourceOverlay
                 for (int lon = 0; lon < 360; lon++)
                 {
                     var amount = (double)(_getRegolithAbundance(lat, lon, 
-						ActiveResource.Resource.ResourceName, _body.flightGlobalsIndex, 0, 0, false));
+						ActiveResource.Resource.ResourceName, _body.flightGlobalsIndex, 0, 0, _biomelock));
                     amount *= 100;
                     if (amount > _displayMax)
                     {
@@ -75,7 +76,7 @@ namespace MapResourceOverlay
                 return new Color32(0, 0, 0, 0);
             }
 			var amount = (double)_getRegolithAbundance(latitude, longitude, 
-                ActiveResource.Resource.ResourceName, body.flightGlobalsIndex, 0, 0, false);
+                ActiveResource.Resource.ResourceName, body.flightGlobalsIndex, 0, 0, _biomelock);
             amount *= 100;
             if (amount > ActiveResource.Cutoff)
             {
@@ -150,7 +151,7 @@ namespace MapResourceOverlay
         public override OverlayTooltip TooltipContent(double latitude, double longitude, CelestialBody body)
         {
             var abundance = (double)_getRegolithAbundance(latitude, longitude, 
-                ActiveResource.Resource.ResourceName, body.flightGlobalsIndex, 0, 0, false);
+                ActiveResource.Resource.ResourceName, body.flightGlobalsIndex, 0, 0, _biomelock);
 			abundance *= 100;
             return new OverlayTooltip(ActiveResource.Resource.ResourceName,
                 new GUIContent("Amount: " + (abundance).ToString("0.0") + "%"));
@@ -321,6 +322,21 @@ namespace MapResourceOverlay
                 
             }
         }
+        
+        public bool BiomeLock
+        {
+            get { return _biomelock; }
+            set
+            {
+                if (_biomelock != value)
+                {
+                    _biomelock = value;
+                    RequiresRedraw();
+                }
+                
+                
+            }
+        }
     }
 
     public class ResourceOverlayView : Window<ResourceOverlayView>
@@ -337,9 +353,13 @@ namespace MapResourceOverlay
         {
             GUILayout.BeginVertical();
             _model.Logaritmic = GUILayout.Toggle(_model.Logaritmic, "Logarithmic Scale");
-            _model.Exponential = GUILayout.Toggle(_model.Exponential, "Exponential Scale");
+            //Removed Exponential until more work done.
+            //_model.Exponential = GUILayout.Toggle(_model.Exponential, "Exponential Scale");
             _model.ColoredScale = GUILayout.Toggle(_model.ColoredScale, "Colored Scale");
-
+            // Override Biome Lock option for Regolith
+            _model.BiomeLock = GUILayout.Toggle(_model.BiomeLock, "Biome Sample Lock");
+            
+            
             GUILayout.Space(15);
             foreach (var res in _model.ColorConfigs)
             {

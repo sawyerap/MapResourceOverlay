@@ -26,6 +26,9 @@ CHANGELOG:
     Resource ppm terminology changed to percent
     Removed MiniAVC for now
 0.2.9
-    Added additional CRP crustal resources (oxygen and uraninite)
+    Added additional CRP crustal resources (uraninite)
     Fixed issue with duplicate buttons on stock toolbar
     Minor renaming on setting config files.
+    Updated for Regolith 0.1.5
+    Updated for SCANSAT 10
+    
