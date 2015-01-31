@@ -25,11 +25,15 @@ CHANGELOG:
     Update to call Regolith libraries
     Resource ppm terminology changed to percent
     Removed MiniAVC for now
-    
+---
 0.2.9
+    Updated for Regolith 0.1.5
+    Updated for SCANSAT 10
+    By default overlay and tooltip disabled in flight view
+    Added toggles for flight tooltip and overlay
+    Added toggle for Regolith Biome Lock
     Added additional CRP crustal resources (uraninite)
     Fixed issue with duplicate buttons on stock toolbar
     Minor renaming on setting config files.
-    Updated for Regolith 0.1.5
-    Updated for SCANSAT 10
+    Refactoring as appropriate.
     
