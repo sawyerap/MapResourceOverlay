@@ -21,19 +21,19 @@ Part of the ScansatWrapper.cs by the SCANSat team. Original found at: https://gi
 ---
 CHANGELOG:
 0.2.8
-    Update Biome code to 0.90
-    Update to call Regolith libraries
-    Resource ppm terminology changed to percent
-    Removed MiniAVC for now
+* Update Biome code to 0.90
+* Update to call Regolith libraries
+* Resource ppm terminology changed to percent
+* Removed MiniAVC for now
 ---
 0.2.9
-    Updated for Regolith 0.1.5
-    Updated for SCANSAT 10
-    By default overlay and tooltip disabled in flight view
-    Added toggles for flight tooltip and overlay
-    Added toggle for Regolith Biome Lock
-    Added additional CRP crustal resources (uraninite)
-    Fixed issue with duplicate buttons on stock toolbar
-    Minor renaming on setting config files.
-    Refactoring as appropriate.
+* Updated for Regolith 0.1.5
+* Updated for SCANSAT 10
+* By default overlay and tooltip disabled in flight view
+* Added toggles for flight tooltip and overlay
+* Added toggle for Regolith Biome Lock
+* Added additional CRP crustal resources (uraninite)
+* Fixed issue with duplicate buttons on stock toolbar
+* Minor renaming on setting config files.
+* Refactoring as appropriate.
     
